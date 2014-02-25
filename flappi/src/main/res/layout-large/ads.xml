@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="90dp">
+    <com.inmobi.monetization.IMBanner android:layout_width="fill_parent"
+        android:layout_height="90dp" android:id="@+id/banner"
+        adSize="11" appId="7285839d28a545b683930fb721996eeb" />
+
+</LinearLayout>

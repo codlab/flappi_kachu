@@ -1,0 +1,4 @@
+include ':flappi',':flappi:libs:InMobi-4.1.1'
+include 'andengine'
+
+project(':andengine').projectDir = new File(settingsDir, './andengine')

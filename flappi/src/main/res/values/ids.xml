@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Replace by your app ID -->
+    <string name="app_id">650383582635</string>
+
+    <!-- Replace by your "Trivial Victory" achievement ID -->
+    <string name="achievement_1">CgkIq8uH7_YSEAIQAA</string>
+    <string name="achievement_2">CgkIq8uH7_YSEAIQAQ</string>
+    <string name="achievement_3">CgkIq8uH7_YSEAIQAg</string>
+    <string name="achievement_4">CgkIq8uH7_YSEAIQAw</string>
+
+    <string name="achievement_pikachu">CgkIq8uH7_YSEAIQBA</string>
+    <string name="achievement_keldeo">CgkIq8uH7_YSEAIQBQ</string>
+
+
+    <string name="leaderboard_max">CgkIq8uH7_YSEAIQBw</string>
+    <string name="leaderboard_total">CgkIq8uH7_YSEAIQCA</string>
+</resources>
