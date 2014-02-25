@@ -34,3 +34,6 @@ proguard/
 
 #BlackBerry
 *.bar
+
+*.DS_STORE
+DS_STORE
