@@ -24,7 +24,17 @@
     <org.andengine.opengl.view.RenderSurfaceView
         android:id="@+id/container"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"/>
+
+        <ImageButton
+            style="@style/ImageButtonAppTheme"
+            android:id="@+id/button_share"
+            android:src="@drawable/share"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
 
     <!-- SIGN-IN BAR -->
     <LinearLayout
@@ -55,6 +65,14 @@
         <TextView
             style="@style/SignInOutBarBlurb"
             android:text="@string/you_are_signed_in" />
+
+        <ImageButton
+            style="@style/ImageButtonAppTheme"
+            android:id="@+id/button_leaderboard"
+            android:src="@drawable/achievement"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:scaleType="fitCenter"/>
 
         <Button
             style="@style/SignOutButton"

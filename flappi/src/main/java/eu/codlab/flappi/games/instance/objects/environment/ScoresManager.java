@@ -22,6 +22,7 @@ public class ScoresManager extends AbstractManager{
     private float _width;
     private float _height;
     private float _title_bottom;
+    private float _bottom;
     private Scene _scene;
     private BitmapTextureAtlas _bitmap_scores;
     private TiledTextureRegion _texture_scores;
@@ -98,10 +99,11 @@ public class ScoresManager extends AbstractManager{
                 new_tiled.setScale(2);
             }
             new_tiled.setY(_height / 6);
+            _bottom = _title_bottom + new_tiled.getHeight()*3/2;
 
             //update positions
             int total_width = (int) (scores.size() * new_tiled.getWidthScaled());
-            int start_x = (int) ((_width - total_width) / 2);
+            int start_x = (int) ((_width - total_width) / 2 + new_tiled.getWidthScaled()/4);
             int idx;
             for (int i = scores.size() - 1; i >= 0; i--) {
                 idx = scores.size() - 1 - i;
@@ -144,6 +146,10 @@ public class ScoresManager extends AbstractManager{
     public void resetScore() {
         prepareScore();
         updateScore0();
+    }
+
+    public float getScoreBottom(){
+        return _bottom;
     }
 
 }

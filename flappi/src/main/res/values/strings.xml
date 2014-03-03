@@ -9,4 +9,7 @@
     <string name="click_me">Click me!</string>
     <string name="victory">Victory</string>
     <string name="you_won">OK! You won!</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="share">just scored % @ Fly Pikachu! Get it on the store http://goo.gl/EcTXpC</string>
+    <string name="share_title">Share your score!</string>
 </resources>

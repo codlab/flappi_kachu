@@ -16,45 +16,74 @@
 package eu.codlab.flappi.games.instance.scene;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.games.achievement.OnAchievementUpdatedListener;
+import com.inmobi.commons.InMobi;
 import com.inmobi.monetization.IMBanner;
+import com.inmobi.monetization.IMBannerListener;
+import com.inmobi.monetization.IMErrorCode;
+
+import org.andengine.engine.options.EngineOptions;
+import org.andengine.entity.scene.Scene;
+import org.andengine.ui.IGameInterface;
+
+import java.util.Map;
 
 import eu.codlab.flappi.R;
 import eu.codlab.flappi.games.basegameutils.BaseGameActivityAndEngine;
 
-public abstract class GoogleServicesActivity extends BaseGameActivityAndEngine implements View.OnClickListener, OnAchievementUpdatedListener {
-    protected boolean _using_ads;
-
+public abstract class GoogleServicesActivity extends BaseGameActivityAndEngine implements View.OnClickListener, OnAchievementUpdatedListener, IMBannerListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        _using_ads = getSharedPreferences("GAME", 0).getBoolean("ads", true);
-
         findViewById(R.id.button_sign_in).setOnClickListener(this);
         findViewById(R.id.button_sign_out).setOnClickListener(this);
+        findViewById(R.id.button_leaderboard).setOnClickListener(this);
         hideAds();
 
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
         if (status != ConnectionResult.SUCCESS) {
             googleServicesError();
         }
+
+        if(findViewById(R.id.adview) != null){
+            InMobi.initialize(this, "7285839d28a545b683930fb721996eeb");
+            IMBanner banner = (IMBanner) findViewById(R.id.banner);
+            IMBanner bannerlarge = (IMBanner) findViewById(R.id.bannerlarge);
+            if (banner != null) {
+                banner.setAdSize(15);
+                banner.setIMBannerListener(this);
+                banner.setRefreshInterval(60);
+                banner.loadBanner();
+            }
+            if (bannerlarge != null) {
+                bannerlarge.setAdSize(11);
+                bannerlarge.setIMBannerListener(this);
+                bannerlarge.setRefreshInterval(60);
+                bannerlarge.loadBanner();
+            }
+        }
     }
 
     private void ads(final int state) {
         runOnUiThread(new Runnable() {
             public void run() {
-                if (_using_ads && findViewById(R.id.adview) != null) {
+                if (findViewById(R.id.adview) != null) {
                     findViewById(R.id.adview).setVisibility(state);
                     IMBanner banner = (IMBanner) findViewById(R.id.banner);
+                    IMBanner bannerlarge = (IMBanner) findViewById(R.id.bannerlarge);
                     if (banner != null && state == View.VISIBLE) {
                         banner.setRefreshInterval(60);
                         banner.loadBanner();
+                    }
+                    if (bannerlarge != null && state == View.VISIBLE) {
+                        bannerlarge.setRefreshInterval(60);
+                        bannerlarge.loadBanner();
                     }
                 }
             }
@@ -127,6 +156,9 @@ public abstract class GoogleServicesActivity extends BaseGameActivityAndEngine i
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.button_leaderboard:
+                startActivityForResult(getGamesClient().getLeaderboardIntent(getString(R.string.leaderboard_max)), 0x42);
+
             case R.id.button_sign_in:
 
                 // start the sign-in flow
@@ -142,7 +174,7 @@ public abstract class GoogleServicesActivity extends BaseGameActivityAndEngine i
 
     @Override
     protected int getLayoutID() {
-        return _using_ads ? R.layout.activity_andengine_ads : R.layout.activity_andengine;
+        return getSharedPreferences("GAME", 0).getBoolean("ads", true) ? R.layout.activity_andengine_ads : R.layout.activity_andengine;
     }
 
     @Override
@@ -178,5 +210,30 @@ public abstract class GoogleServicesActivity extends BaseGameActivityAndEngine i
 
     @Override
     public void onAchievementUpdated(final int i, final String s) {
+    }
+
+    @Override
+    public void onBannerRequestFailed(IMBanner imBanner, IMErrorCode imErrorCode) {
+    }
+
+    @Override
+    public void onBannerRequestSucceeded(IMBanner imBanner) {
+    }
+
+    @Override
+    public void onBannerInteraction(IMBanner imBanner, Map<String, String> stringStringMap) {
+    }
+
+    @Override
+    public void onShowBannerScreen(IMBanner imBanner) {
+    }
+
+    @Override
+    public void onDismissBannerScreen(IMBanner imBanner) {
+
+    }
+
+    @Override
+    public void onLeaveApplication(IMBanner imBanner) {
     }
 }

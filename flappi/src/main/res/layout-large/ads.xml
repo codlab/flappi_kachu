@@ -5,7 +5,7 @@
               android:layout_width="fill_parent"
               android:layout_height="90dp">
     <com.inmobi.monetization.IMBanner android:layout_width="fill_parent"
-        android:layout_height="90dp" android:id="@+id/banner"
+        android:layout_height="90dp" android:id="@+id/bannerlarge"
         adSize="11" appId="7285839d28a545b683930fb721996eeb" />
 
 </LinearLayout>

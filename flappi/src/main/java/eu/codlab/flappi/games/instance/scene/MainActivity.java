@@ -1,8 +1,17 @@
 package eu.codlab.flappi.games.instance.scene;
 
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
@@ -26,6 +35,7 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import eu.codlab.flappi.R;
 import eu.codlab.flappi.games.instance.objects.environment.BackgroundManager;
 import eu.codlab.flappi.games.instance.objects.environment.BarManager;
 import eu.codlab.flappi.games.instance.objects.environment.CloudsManager;
@@ -42,6 +52,7 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
     private BitmapTextureAtlas _texture_particle;
     private TiledTextureRegion _tiled_particle;
     private ArrayList<Particle> _particles;
+
     private ArrayList<Particle> getParticles() {
         if (_particles == null) _particles = new ArrayList<Particle>();
         return _particles;
@@ -66,8 +77,9 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
      * Manage the scores in the game
      */
     private ScoresManager _scores;
-    private ScoresManager getScoresManager(){
-        if(_scores == null)_scores = new ScoresManager(this);
+
+    private ScoresManager getScoresManager() {
+        if (_scores == null) _scores = new ScoresManager(this);
         return _scores;
     }
 
@@ -75,8 +87,9 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
      * Manage the clouds
      */
     private CloudsManager _clouds;
-    private CloudsManager getCloudsManager(){
-        if(_clouds == null)_clouds = new CloudsManager(this);
+
+    private CloudsManager getCloudsManager() {
+        if (_clouds == null) _clouds = new CloudsManager(this);
         return _clouds;
     }
 
@@ -84,8 +97,9 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
      * Manage the title
      */
     private TitleManager _title_manager;
-    private TitleManager getTitleManager(){
-        if(_title_manager == null)_title_manager = new TitleManager(this);
+
+    private TitleManager getTitleManager() {
+        if (_title_manager == null) _title_manager = new TitleManager(this);
         return _title_manager;
     }
 
@@ -93,8 +107,9 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
      * Manage the background
      */
     private BackgroundManager _background_manager;
-    private BackgroundManager getBackgroundManager(){
-        if(_background_manager == null)_background_manager = new BackgroundManager(this);
+
+    private BackgroundManager getBackgroundManager() {
+        if (_background_manager == null) _background_manager = new BackgroundManager(this);
         return _background_manager;
     }
 
@@ -110,19 +125,25 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
 
     private float bottom = 0;
 
-    private Sound _jump;
-    private Music _music;
-
+    private static Sound _jump;
+    private static Music _music;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        hideShare();
     }
 
+    private float _scale_to_main_ui;
 
     @Override
     public EngineOptions onCreateEngineOptions() {
+
+        CAMERA_HEIGHT = 1280;
+        CAMERA_WIDTH = 720;
+
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -132,9 +153,15 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
         if (CAMERA_HEIGHT * 5 / 4 >= _screen_height || CAMERA_WIDTH * 5 / 4 >= _screen_width) {
             CAMERA_WIDTH = _screen_width * 2;
             CAMERA_HEIGHT = _screen_height * 2;
+            _scale_to_main_ui = 0.5f;
+        } else if (_screen_height * 5 / 4 >= CAMERA_HEIGHT || _screen_width * 5 / 4 >= CAMERA_WIDTH) {
+            CAMERA_WIDTH = _screen_width * 2 / 3;
+            CAMERA_HEIGHT = _screen_height*2 / 3;
+            _scale_to_main_ui = 3.f / 2;
         } else {
             CAMERA_WIDTH = _screen_width;
             CAMERA_HEIGHT = _screen_height;
+            _scale_to_main_ui = 1.f;
         }
 
         _camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -145,9 +172,63 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
         return engineoptions;
     }
 
+    private void hideShare(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ImageButton btn_share = (ImageButton)findViewById(R.id.button_share);
+                if(btn_share != null){
+                    btn_share.setVisibility(View.GONE);
+                }
+
+            }
+        });
+    }
+
+
+    private void showShare(final int score, final float y){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ImageButton btn_share = (ImageButton)findViewById(R.id.button_share);
+                if(btn_share != null){
+                    if(Build.VERSION.SDK_INT >= 11){
+                        btn_share.setY(y*_scale_to_main_ui);
+                    }else{
+                        FrameLayout.LayoutParams params = ((FrameLayout.LayoutParams)btn_share.getLayoutParams());
+                        params.topMargin = (int) (y*_scale_to_main_ui);
+                        btn_share.requestLayout();
+                    }
+                    btn_share.setVisibility(View.VISIBLE);
+                    btn_share.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String message = getString(R.string.share).replace("%",score+"");
+                            Intent share = new Intent(Intent.ACTION_SEND);
+                            share.setType("text/plain");
+                            share.putExtra(Intent.EXTRA_TEXT, message);
+
+                            startActivity(Intent.createChooser(share, getString(R.string.share_title)));
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void stopMusic() {
+        if (_music != null && _music.isPlaying())
+            _music.stop();
+    }
+    private void pauseMusic() {
+        if (_music != null && _music.isPlaying())
+            _music.pause();
+    }
+
     private void playMusic() {
-        if (_music != null && !_music.isPlaying())
+        if (_music != null &&!_music.isPlaying()) {
             _music.play();
+        }
     }
 
     private void playJump() {
@@ -166,7 +247,8 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
         getTitleManager().onCreateResources(getTextureManager());
 
         try {
-            _music = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music.ogg");
+            if(_music == null || _music.isReleased())
+                _music = MusicFactory.createMusicFromAsset(mEngine.getMusicManager(), this, "music.ogg");
             _music.setLooping(true);
             _jump = SoundFactory.createSoundFromAsset(mEngine.getSoundManager(), this, "jump.ogg");
         } catch (final IOException e) {
@@ -204,6 +286,36 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
 
         pOnCreateResourcesCallback.onCreateResourcesFinished();
     }
+
+    @Override
+    public void onPause() {
+        mEngine.getMusicManager().onPause();
+        pauseMusic();
+        super.onPause();
+
+    }
+
+    private static boolean _has_focus;
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus){
+        super.onWindowFocusChanged(hasWindowFocus);
+        _has_focus = hasWindowFocus;
+        if(_has_focus)
+            mEngine.getMusicManager().onResume();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(_has_focus)
+            mEngine.getMusicManager().onResume();
+    }
+
+    /*public void onActivityResult(int requestCode, int responseCode, Intent intent) {
+        if (requestCode == 0x42) {
+            playMusic();
+        }
+    }*/
 
     /**
      * Scene ok
@@ -262,13 +374,13 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
 
 
         getTitleManager().onCreateScene(_scene, getVertexBufferObjectManager(), CAMERA_WIDTH, CAMERA_HEIGHT);
-        getTitleManager().updateTitleSprites(CAMERA_WIDTH,CAMERA_HEIGHT);
+        getTitleManager().updateTitleSprites(CAMERA_WIDTH, CAMERA_HEIGHT);
 
         getScoresManager().onCreateScene(_scene, getVertexBufferObjectManager(), CAMERA_WIDTH, CAMERA_HEIGHT, getTitleManager().getTitleBottom());
         getScoresManager().prepareScore();
 
 
-        getBackgroundManager().onCreateScene(_scene,getVertexBufferObjectManager(), CAMERA_WIDTH, CAMERA_HEIGHT);
+        getBackgroundManager().onCreateScene(_scene, getVertexBufferObjectManager(), CAMERA_WIDTH, CAMERA_HEIGHT);
 
         pOnCreateSceneCallback.onCreateSceneFinished(_scene);
     }
@@ -291,9 +403,8 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
     /**
      * Manage touch events
      *
-     * @param pScene The {@link Scene} that the {@link TouchEvent} has been dispatched to.
+     * @param pScene           The {@link Scene} that the {@link TouchEvent} has been dispatched to.
      * @param pSceneTouchEvent The {@link TouchEvent} object containing full information about the event.
-     *
      * @return
      */
     @Override
@@ -331,6 +442,7 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
 
     /**
      * Call at regular interval
+     *
      * @param pSecondsElapsed
      */
     @Override
@@ -357,14 +469,14 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
                     } else {
                         //first we check the X collision with one element in order to prevent 4 possible tests
                         //in worst case we have 5 collision tests but most of the time only 1!
-                        boolean collide_left_pikachu = _pikachu.getX() < tmp.getBottom().getX() && _pikachu.getX()+_pikachu.getWidth() > tmp.getBottom().getX();
-                        boolean collide_right_pikachu = tmp.getBottom().getX() < _pikachu.getX() && tmp.getBottom().getX()+tmp.getBottom().getWidth() > _pikachu.getX();
+                        boolean collide_left_pikachu = _pikachu.getX() < tmp.getBottom().getX() && _pikachu.getX() + _pikachu.getWidth() > tmp.getBottom().getX();
+                        boolean collide_right_pikachu = tmp.getBottom().getX() < _pikachu.getX() && tmp.getBottom().getX() + tmp.getBottom().getWidth() > _pikachu.getX();
                         if ((collide_left_pikachu || collide_right_pikachu)
                                 &&
                                 (_pikachu.collidesWith(tmp.getBottom()) ||
-                                _pikachu.collidesWith(tmp.getTop()) ||
-                                _pikachu.collidesWith(tmp.getMiddleBottom()) ||
-                                _pikachu.collidesWith(tmp.getMiddleTop()))) {
+                                        _pikachu.collidesWith(tmp.getTop()) ||
+                                        _pikachu.collidesWith(tmp.getMiddleBottom()) ||
+                                        _pikachu.collidesWith(tmp.getMiddleTop()))) {
                             _pikachu.failed();
                             showScore();
                         } else if (tmp.getX() < _pikachu.getX()) {
@@ -412,6 +524,7 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
      */
     public void start() {
         hideAds();
+        hideShare();
 
         getScoresManager().resetScore();
 
@@ -448,6 +561,7 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
             });
             getTitleManager().resetTitle(CAMERA_WIDTH, CAMERA_HEIGHT);
             getScoresManager().updateScoreSetYFinish();
+            showShare(getScoresManager().getScore(), getScoresManager().getScoreBottom());
 
         }
     }

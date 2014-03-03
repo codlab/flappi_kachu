@@ -18,7 +18,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/MainLayout"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    >
 
     <!-- MAIN DISPLAY -->
     <org.andengine.opengl.view.RenderSurfaceView
@@ -35,6 +36,16 @@
         <include layout="@layout/ads" />
     </LinearLayout>
 
+
+        <ImageButton
+            style="@style/ImageButtonAppTheme"
+            android:id="@+id/button_share"
+            android:src="@drawable/share"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
 
 
     <!-- SIGN-IN BAR -->
@@ -66,6 +77,15 @@
         <TextView
             style="@style/SignInOutBarBlurb"
             android:text="@string/you_are_signed_in" />
+
+
+        <ImageButton
+            style="@style/ImageButtonAppTheme"
+            android:id="@+id/button_leaderboard"
+            android:src="@drawable/achievement"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:scaleType="fitCenter"/>
 
         <Button
             style="@style/SignOutButton"
