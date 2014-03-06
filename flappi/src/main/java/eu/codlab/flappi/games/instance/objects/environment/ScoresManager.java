@@ -13,6 +13,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import java.util.ArrayList;
 
 import eu.codlab.flappi.games.instance.objects.descriptor.AbstractManager;
+import eu.codlab.flappi.games.instance.scene.IGetWidthHeight;
 
 /**
  * Created by kevin on 25/02/14.
@@ -43,6 +44,12 @@ public class ScoresManager extends AbstractManager{
     public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, int width, int height) throws IllegalAccessException {
         throw new IllegalAccessException("Must use the method with title_bottom");
     }
+
+    @Override
+    public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, IGetWidthHeight screen) throws IllegalAccessException {
+
+    }
+
     public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, int width, int height, float title_bottom) {
         _title_bottom = title_bottom;
         _scene = scene;

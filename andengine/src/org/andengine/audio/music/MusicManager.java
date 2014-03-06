@@ -38,6 +38,16 @@ public class MusicManager extends BaseAudioManager<Music> {
 	// Methods
 	// ===========================================================
 
+    public void onPause() {
+        for(Music music : this.mAudioEntities)
+            music.pause();
+    }
+
+    public void onResume() {
+        for(Music music : this.mAudioEntities)
+            music.play();
+    }
+
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================

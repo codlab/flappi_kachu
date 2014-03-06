@@ -16,6 +16,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import javax.microedition.khronos.opengles.GL10;
 
 import eu.codlab.flappi.games.instance.objects.descriptor.AbstractManager;
+import eu.codlab.flappi.games.instance.scene.IGetWidthHeight;
 
 /**
  * Created by kevin on 25/02/14.
@@ -50,6 +51,11 @@ public class TitleManager extends AbstractManager{
 
         scene.attachChild(_title_sprite);
         scene.attachChild(_title_sprite2);
+
+    }
+
+    @Override
+    public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, IGetWidthHeight screen) throws IllegalAccessException {
 
     }
 

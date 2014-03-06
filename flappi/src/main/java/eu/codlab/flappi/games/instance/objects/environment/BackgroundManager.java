@@ -14,13 +14,15 @@ import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import eu.codlab.flappi.games.instance.objects.descriptor.AbstractManager;
+import eu.codlab.flappi.games.instance.scene.IGetWidthHeight;
 
 /**
  * Created by kevin on 25/02/14.
  */
 public class BackgroundManager extends AbstractManager{
     private float _bottom;
-
+    private AutoParallaxBackground autoParallaxBackground;
+    private ParallaxLayer parallaxLayer;
     private Sprite _ground_sprite;
     private BitmapTextureAtlas _bitmap_ground;
     private TextureRegion _texture_ground;
@@ -67,21 +69,37 @@ public class BackgroundManager extends AbstractManager{
         return _ground_sprite;
     }
 
-    @Override
-    public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, int width, int height) {
-
+    public void onCreateSceneBack(Scene scene, VertexBufferObjectManager vertexManager, int width, int height) {
         final AutoParallaxBackground autoParallaxBackground = new AutoParallaxBackground(196f / 255f, 233f / 255f, 1f, 8);
-        autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(-5.0f, new Sprite(0, _bottom - this.mParallaxLayerBack.getHeight() - (this.mParallaxLayerBushes.getHeight() / 2) - (this.mParallaxLayerMid.getHeight() / 2), this.mParallaxLayerBack, vertexManager)));
-        autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(-20.0f, new Sprite(0, _bottom - this.mParallaxLayerMid.getHeight() - (this.mParallaxLayerBushes.getHeight() / 2), this.mParallaxLayerMid, vertexManager)));
-        autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(-30.0f, new Sprite(0, _bottom - this.mParallaxLayerFront.getHeight() - (this.mParallaxLayerBushes.getHeight() / 2), this.mParallaxLayerFront, vertexManager)));
-        autoParallaxBackground.attachParallaxEntity(new ParallaxBackground.ParallaxEntity(-50.0f, new Sprite(0, _bottom - this.mParallaxLayerBushes.getHeight(), this.mParallaxLayerBushes, vertexManager)));
         scene.setBackground(autoParallaxBackground);
 
-        final ParallaxLayer parallaxLayer = new ParallaxLayer(true, 4000);
+        ParallaxLayer background_layer = new ParallaxLayer(true, 4000);
+        background_layer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(-5.0f, new Sprite(0, _bottom - this.mParallaxLayerBack.getHeight() - (this.mParallaxLayerBushes.getHeight() / 2) - (this.mParallaxLayerMid.getHeight() / 2), this.mParallaxLayerBack, vertexManager)));
+        background_layer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(-20.0f, new Sprite(0, _bottom - this.mParallaxLayerMid.getHeight() - (this.mParallaxLayerBushes.getHeight() / 2), this.mParallaxLayerMid, vertexManager)));
+        background_layer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(-30.0f, new Sprite(0, _bottom - this.mParallaxLayerFront.getHeight() - (this.mParallaxLayerBushes.getHeight() / 2), this.mParallaxLayerFront, vertexManager)));
+        background_layer.attachParallaxEntity(new ParallaxLayer.ParallaxEntity(-50.0f, new Sprite(0, _bottom - this.mParallaxLayerBushes.getHeight(), this.mParallaxLayerBushes, vertexManager)));
+        background_layer.setParallaxChangePerSecond(8);
+        scene.attachChild(background_layer);
+    }
+    @Override
+    public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, int width, int height) {
+        parallaxLayer = new ParallaxLayer(true, 4000);
         _ground_sprite = new Sprite(0, _bottom, _texture_ground, vertexManager);//, CAMERA_WIDTH, CAMERA_HEIGHT - bottom,
         _ground = new ParallaxLayer.ParallaxEntity(-50.0f, new Sprite(0, _bottom, this.mParallaxLayerGround, vertexManager));
         parallaxLayer.attachParallaxEntity(_ground);
         parallaxLayer.setParallaxChangePerSecond(8);
         scene.attachChild(parallaxLayer);
+    }
+
+    @Override
+    public void onCreateScene(Scene scene, VertexBufferObjectManager vertexManager, IGetWidthHeight screen) throws IllegalAccessException {
+
+    }
+
+    public void detach(Scene scene){
+        if(scene != null){
+            scene.detachChild(parallaxLayer);
+            scene.detachChild(_ground_sprite);
+        }
     }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/Users/kevinleperf/flappi_kachu/andengine-livewallpaper/assets" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="/Users/kevinleperf/flappi_kachu/andengine-livewallpaper/src/release/assets" />
+    </dataSet>
+
+</merger>

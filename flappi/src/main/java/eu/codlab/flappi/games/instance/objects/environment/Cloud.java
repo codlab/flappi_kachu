@@ -6,18 +6,16 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import java.util.Random;
 
 import eu.codlab.flappi.games.instance.objects.descriptor.GameObjectAnimatedSprite;
+import eu.codlab.flappi.games.instance.scene.IGetWidthHeight;
 
 /**
  * Created by kevin on 18/02/14.
  */
 public class Cloud extends GameObjectAnimatedSprite {
-    private int _w;
-    private int _h;
-
-    public Cloud(final float pX, final float pY, final TiledTextureRegion pTiledTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager, int w, int h) {
+    private IGetWidthHeight _interface_screen;
+    public Cloud(final float pX, final float pY, final TiledTextureRegion pTiledTextureRegion, final VertexBufferObjectManager pVertexBufferObjectManager, IGetWidthHeight screenInterface) {
         super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
-        _w = w;
-        _h = h;
+        _interface_screen = screenInterface;
         reset();
     }
 
@@ -29,14 +27,14 @@ public class Cloud extends GameObjectAnimatedSprite {
     }
 
     public void reset(){
-        this.setX(getRandom().nextInt(_w)+_w);
-        this.setY(getRandom().nextInt(_h/4));
+        this.setX(getRandom().nextInt((int) _interface_screen.getWidth())+_interface_screen.getWidth());
+        this.setY(getRandom().nextInt((int) (_interface_screen.getHeight()/4)));
         this.setCurrentTileIndex((getRandom().nextInt(4))%4);
         this.mPhysicsHandler.setVelocityX(-100-getRandom().nextInt(200));
     }
     @Override
     public void move(float pSecondsElapsed) {
-        if(this.getX() + this.getWidth()*2 < 0)
+        if(this.getX() + this.getWidth()*2 < _interface_screen.get0())
             reset();
     }
 }

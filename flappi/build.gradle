@@ -37,8 +37,10 @@ android {
 }
 
 dependencies {
-    compile files('libs/InMobi-4.1.1.jar')
+    //compile files('libs/InMobi-4.1.1.jar')
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.google.android.gms:play-services:4.1.32+'
     compile project(':andengine')
+    compile project(':andengine-livewallpaper')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }

@@ -1,5 +1,7 @@
 package org.andengine.entity;
 
+import android.util.Log;
+
 import org.andengine.engine.camera.Camera;
 import org.andengine.entity.shape.IAreaShape;
 import org.andengine.opengl.util.GLState;
@@ -186,28 +188,45 @@ public class ParallaxLayer extends Entity {
         public void onDraw(final GLState pGLState, final Camera pCamera, final float pParallaxValue, final float mLevelWidth) {
             pGLState.pushModelViewGLMatrix();
             {
-                float widthRange;
+                final float cameraWidth = Math.max(pCamera.getHeight(), pCamera.getWidth());
 
-                if(mLevelWidth != 0){
+
+
+
+                //----
+                float base0 = 0;
+                //if(pCamera.getWidth() > pCamera.getHeight()){
+                //    base0= -((pCamera.getWidth() - pCamera.getHeight())/2);
+                //}
+
+
+                /*if(mLevelWidth != 0){
                     widthRange = mLevelWidth;
                 } else {
                     widthRange = pCamera.getWidth();
-                }
+                }*/
 
                 float baseOffset = (pParallaxValue * this.mParallaxFactor) % shapeWidthScaled;
 
-                while(baseOffset > 0) {
+                while(baseOffset > base0) {
                     baseOffset -= shapeWidthScaled;
                 }
-                pGLState.translateModelViewGLMatrixf(baseOffset, 0, 0);
+
+                Log.d("baseOffset", "" + baseOffset);
+                pGLState.translateModelViewGLMatrixf(baseOffset-pCamera.getWidth() - pCamera.getHeight(), 0, 0);
 
                 float currentMaxX = baseOffset;
+                if(pCamera.getWidth() > pCamera.getHeight()){
+                    base0= -((pCamera.getWidth() - pCamera.getHeight())/2);
+                }
 
+                currentMaxX -= pCamera.getWidth() + pCamera.getHeight();
                 do {
                     this.mAreaShape.onDraw(pGLState, pCamera);
-                    pGLState.translateModelViewGLMatrixf(shapeWidthScaled - 1, 0, 0);
+                    pGLState.translateModelViewGLMatrixf(shapeWidthScaled, 0, 0);
                     currentMaxX += shapeWidthScaled;
-                } while(currentMaxX < widthRange);
+                } while(currentMaxX < cameraWidth);
+
             }
             pGLState.popModelViewGLMatrix();
         }

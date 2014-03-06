@@ -44,7 +44,7 @@ import eu.codlab.flappi.games.instance.objects.environment.TitleManager;
 import eu.codlab.flappi.games.instance.objects.player.Particle;
 import eu.codlab.flappi.games.instance.objects.player.Player;
 
-public class MainActivity extends GoogleServicesActivity implements IOnSceneTouchListener, IUpdateHandler {
+public class MainActivity extends GoogleServicesActivity implements IOnSceneTouchListener, IUpdateHandler,IGetWidthHeight {
     private BitmapTextureAtlas _texture_pikachu;
     private TiledTextureRegion _tiled_pikachu;
     private Player _pikachu;
@@ -352,8 +352,10 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
         bottom = CAMERA_HEIGHT - getBackgroundManager().getGroundHeight();
 
         getBackgroundManager().setBottom(bottom);
+        getBackgroundManager().onCreateSceneBack(_scene, getVertexBufferObjectManager(), CAMERA_WIDTH, CAMERA_HEIGHT);
 
-        getCloudsManager().onCreateScene(_scene, getVertexBufferObjectManager(), CAMERA_WIDTH, CAMERA_HEIGHT);
+
+        getCloudsManager().onCreateScene(_scene, getVertexBufferObjectManager(), this);
 
 
         for (int dx = 0; dx < CAMERA_WIDTH; dx += _bar_deltaX) {
@@ -573,5 +575,21 @@ public class MainActivity extends GoogleServicesActivity implements IOnSceneTouc
 
     @Override
     public void onAchievementUpdated(final int i, final String s) {
+    }
+
+
+    @Override
+    public float getHeight() {
+        return CAMERA_HEIGHT;
+    }
+
+    @Override
+    public float getWidth() {
+        return CAMERA_WIDTH;
+    }
+
+    @Override
+    public float get0() {
+        return 0;
     }
 }

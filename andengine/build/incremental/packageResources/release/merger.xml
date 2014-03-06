@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/Users/kevinleperf/flappi_kachu/andengine/res" />
+        <source path="/Users/kevinleperf/flappi_kachu/andengine/build/res/rs/release" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="/Users/kevinleperf/flappi_kachu/andengine/src/release/res" />
+    </dataSet>
+
+</merger>
